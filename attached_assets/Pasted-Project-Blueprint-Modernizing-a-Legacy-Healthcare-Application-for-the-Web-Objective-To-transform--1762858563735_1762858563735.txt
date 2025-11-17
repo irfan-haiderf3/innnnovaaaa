@@ -1,0 +1,54 @@
+Project Blueprint: Modernizing a Legacy Healthcare Application for the Web
+Objective: To transform an existing desktop healthcare application into a modern, responsive, and user-centric web application using Next.js and TypeScript. This document outlines the comprehensive strategy for establishing a consistent brand identity, a robust design system, and an intuitive user interface.
+1. Brand Identity & Visual Language
+A consistent and professional brand identity is fundamental to building user trust and ensuring a high-quality user experience.
+Logo: A new, clean logo will be designed to be simple and memorable, reflecting our core values of care, efficiency, and reliability.
+Color Palette:
+Primary Color (Blue): A calming, professional blue will be used for primary actions, active states, and links to convey trust and stability.
+Secondary Color (Green): A soft, approachable green will indicate success, positive outcomes, and secondary actions, associating the app with health and well-being.
+Neutral Palette (Grays): A range of grays will ensure a clean, uncluttered interface for text, backgrounds, and borders.
+Accent Color (Red): A muted red will be used exclusively for critical alerts and error states to draw immediate attention.
+Typography:
+Primary Typeface: A modern, highly legible sans-serif font like Inter or Nunito Sans will be used for all UI text to ensure clarity on all screen sizes.
+Visual Hierarchy: A well-defined scale of font sizes and weights (Regular, Medium, Bold) will be used to guide the user's attention to the most important information.
+Iconography:
+Style: A consistent set of clean, minimalist line icons will be used to provide clear visual cues without cluttering the interface.
+Library: A standardized icon library such as Feather Icons or Heroicons will be implemented to maintain visual consistency.
+2. Centralized Design System & Theming
+To ensure consistency and simplify maintenance, all design elements will be managed in a single, centralized theme file. This file will be the single source of truth for all styles.
+Theme File (theme.ts): This file will define all design tokens, including:
+Colors: The complete brand color palette.
+Spacing: A consistent scale for margins, padding, and layout gaps.
+Typography: Font families, sizes, and weights.
+Component Variants: Pre-defined styles for UI components like buttons and cards.
+3. Standardized SVG Asset Management
+All icons will be standardized as reusable SVG components to ensure they are scalable, accessible, and easily managed.
+Icon Components: Each SVG icon will be a separate React component, allowing for easy customization of size, color, and other properties via props.
+Directory Structure: A dedicated /components/icons directory will house the entire icon library.
+4. Responsive Layout & Structure
+The application will be built with a mobile-first, responsive layout that adapts seamlessly from small mobile screens to large desktop monitors.
+Header: A clean, fixed header will contain the logo, primary navigation, and a user profile menu. On smaller screens, navigation will collapse into a hamburger menu.
+Navigation: The main navigation menu will be streamlined to provide intuitive access to the application's core features.
+Footer: A minimal footer will contain essential links (e.g., Help, Privacy Policy). Non-essential information from the original footer (like system status) will be moved to the header or user menu to maximize content visibility.
+5. Project Architecture & Component Library
+A scalable project structure and a library of reusable UI primitives are key to efficient development and long-term maintainability.
+Project Structure: The project will follow a logical folder structure that separates pages, reusable UI components, layout components, styles, and utility functions.
+Component Library (/components/ui): A comprehensive set of foundational UI components will be built to ensure consistency across the application. This library will include:
+Button
+Input
+Select
+Table
+Modal
+Card
+6. UI Design: Login Page & Planboard
+Login Page
+The login page will be redesigned to be clean, modern, and welcoming.
+Layout: A two-column design will feature a professional, empathetic image of a caregiver with an elderly patient on one side and a clean, simple login form on the other.
+Content: The page will include the new logo and dummy contact information for user support.
+Planboard UI
+The complex Planboard screen will be redesigned to be intuitive, efficient, and scroll-less on desktop screens.
+Layout Strategy: The interface will be organized into tabs to separate distinct functional areas, reducing cognitive load.
+Tab 1: Search & Filters: All search fields and filtering options will be consolidated into a dedicated, well-organized panel.
+Tab 2: Planboard Results: The main data table will be presented in a separate tab, providing a clean and focused view of the results.
+Responsive Table: The data table will be fully responsive. On smaller screens, it will feature horizontal scrolling with a fixed initial column to maintain context.
+Action Consolidation: Actions from the original header and footer (e.g., "Complete All Shifts," status filters) will be moved into a unified action bar located directly above the tabbed content for easy access. This eliminates the need for vertical scrolling to perform key tasks.
