@@ -692,11 +692,11 @@ export const statusColors = {
   inProgress: "#F59E0B",   // Orange
   assigned: "#3B82F6",     // Blue
   delayed: "#EF4444",      // Red
-  unassigned: "#8B5CF6",   // Purple
+  unassigned: "#2C5282",   // Deep blue (changed from purple)
   cancelled: "#6B7280",    // Gray
   pending: "#F59E0B",      // Orange
   provisional: "#EC4899",  // Pink
-  updateRequired: "#8B5CF6", // Purple
+  updateRequired: "#2C5282", // Deep blue (changed from purple)
 };
 
 // =============================================================================

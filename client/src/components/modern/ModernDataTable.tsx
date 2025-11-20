@@ -190,7 +190,7 @@ export const cellRenderers = {
       {value ? (
         <span style={{ color: brandColors.success }}>{activeIcon}</span>
       ) : (
-        <span style={{ color: brandColors.neutral[300] }}>{activeIcon}</span>
+        <span style={{ color: brandColors.neutral[700] }}>{activeIcon}</span>
       )}
     </div>
   ),

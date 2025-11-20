@@ -1,4 +1,4 @@
-import logoImage from "@/../../attached_assets/logo.png";
+import logoImage from "@/components/images/ic_launcher.png";
 
 interface LogoProps {
   className?: string;

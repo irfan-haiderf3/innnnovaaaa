@@ -103,11 +103,18 @@ export default function HomePage() {
   ];
 
   const mockData = [
-    { id: "2-2-28781", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "Addn", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
-    { id: "2-2-28781", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "Addn", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
-    { id: "2-2-28781", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "Addn", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
-    { id: "2-2-28781", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "Addn", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
-    { id: "2-1-49/1", disable: false, disableAll: false, snooze: true, alertType: "Carer Leave o...", firstName: "Amandeep", surname: "Kaur", description: "On leave (Sick Leave) from 14/05/2025 to 14/05/2025", coordinator: "", other: "" },
+    { id: "2-2-28751", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "Aidan", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28751", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "Aidan", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28751", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "Aidan", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28751", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "Aidan", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28831", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "AN test", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28831", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "AN test", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28831", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "AN test", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28831", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "AN test", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28831", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "AN test", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28831", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "AN test", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28831", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "AN test", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
+    { id: "2-2-28831", disable: false, disableAll: false, snooze: true, alertType: "Carer unassi...", firstName: "AN test", surname: "", description: "Carer Unassigned", coordinator: "", other: "" },
   ];
 
   return (
@@ -165,29 +172,32 @@ export default function HomePage() {
             </Select>
           </div>
 
-          {/* Checkboxes */}
-          <div className="flex items-center gap-3 pl-2">
-            <div className="flex items-center space-x-1.5">
-              <Checkbox
-                id="load-disabled"
-                checked={loadDisabledAlerts}
-                onCheckedChange={(checked) => setLoadDisabledAlerts(checked as boolean)}
-                className="h-3 w-3"
-              />
-              <label htmlFor="load-disabled" className="text-xs cursor-pointer">
-                Load Disabled Alerts
-              </label>
-            </div>
-            <div className="flex items-center space-x-1.5">
-              <Checkbox
-                id="load-read"
-                checked={loadReadAlerts}
-                onCheckedChange={(checked) => setLoadReadAlerts(checked as boolean)}
-                className="h-3 w-3"
-              />
-              <label htmlFor="load-read" className="text-xs cursor-pointer">
-                Load Read Alerts
-              </label>
+          {/* Checkboxes - Aligned with other fields */}
+          <div className="space-y-0.5">
+            <Label className="text-[11px] font-semibold text-slate-600 invisible">Options</Label>
+            <div className="flex items-center gap-3 h-7">
+              <div className="flex items-center space-x-1.5">
+                <Checkbox
+                  id="load-disabled"
+                  checked={loadDisabledAlerts}
+                  onCheckedChange={(checked) => setLoadDisabledAlerts(checked as boolean)}
+                  className="h-3 w-3"
+                />
+                <label htmlFor="load-disabled" className="text-xs cursor-pointer whitespace-nowrap">
+                  Load Disabled Alerts
+                </label>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <Checkbox
+                  id="load-read"
+                  checked={loadReadAlerts}
+                  onCheckedChange={(checked) => setLoadReadAlerts(checked as boolean)}
+                  className="h-3 w-3"
+                />
+                <label htmlFor="load-read" className="text-xs cursor-pointer whitespace-nowrap">
+                  Load Read Alerts
+                </label>
+              </div>
             </div>
           </div>
 

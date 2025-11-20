@@ -41,24 +41,143 @@ export default function ModernHeader({
     setScheme(scheme);
   };
 
+  // Main menu items for inline display
+  const mainMenuItems = [
+    { href: "/", label: "Home", icon: Home },
+    { href: "/planboardv3", label: "Plan Board", icon: LayoutDashboard },
+  ];
+
   return (
     <>
-      {/* Top Section - Logo and User Info */}
+      {/* Single Unified Header Row */}
       <div
-        className="border-b shadow-lg"
+        className="border-b"
         style={{
           background: `linear-gradient(135deg, ${theme.colors.primary[500]} 0%, ${theme.colors.primary[700]} 100%)`,
-          minHeight: "64px",
+          minHeight: "56px",
+          borderBottomColor: "rgba(255,255,255,0.15)",
         }}
       >
-        <div className="flex items-center justify-between px-6 py-3">
-          {/* Logo Section */}
-          <div className="flex items-center gap-3">
-            <Logo size="md" />
+        <div className="flex items-center justify-between px-4 py-2 gap-2">
+          {/* Logo */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Logo size="sm" />
           </div>
 
-          {/* User Info Section */}
-          <div className="flex items-center gap-4">
+          {/* Main Navigation - Inline */}
+          <nav className="hidden lg:flex items-center gap-1 flex-1 mx-2">
+            {mainMenuItems.map((item) => (
+              <Link key={item.href} href={item.href}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-3 gap-1.5 hover:bg-white/20 rounded-md text-white transition-all"
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span className="text-xs font-medium hidden xl:inline">{item.label}</span>
+                </Button>
+              </Link>
+            ))}
+
+            {/* Scheduling Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-3 gap-1.5 hover:bg-white/20 rounded-md text-white transition-all"
+                >
+                  <Calendar className="h-4 w-4" />
+                  <span className="text-xs font-medium hidden xl:inline">Scheduling</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  View Calendar
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <ClipboardList className="mr-2 h-4 w-4" />
+                  Task Management
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Activity className="mr-2 h-4 w-4" />
+                  Staff Schedule
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Clients Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-3 gap-1.5 hover:bg-white/20 rounded-md text-white transition-all"
+                >
+                  <Users className="h-4 w-4" />
+                  <span className="text-xs font-medium hidden xl:inline">Clients</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Users className="mr-2 h-4 w-4" />
+                  Client List
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Care Plans
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Stethoscope className="mr-2 h-4 w-4" />
+                  Medical Records
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* More Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-3 gap-1.5 hover:bg-white/20 rounded-md text-white transition-all"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  <span className="text-xs font-medium hidden xl:inline">More</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Analytics Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Care Reports
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Activity className="mr-2 h-4 w-4" />
+                  Performance Metrics
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Bell className="mr-2 h-4 w-4" />
+                  Notifications
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Messages
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Help
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </nav>
+
+          {/* User Section */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             {/* Theme Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -97,21 +216,21 @@ export default function ModernHeader({
 
             {/* User Badge */}
             <Badge
-              className="hidden md:flex items-center gap-2 px-4 py-2 text-sm bg-white/10 border-white/20 text-white backdrop-blur-sm"
+              className="hidden md:flex items-center gap-1 px-2 py-0.5 text-xs bg-white/10 border-white/20 text-white backdrop-blur-sm"
             >
-              <User className="h-4 w-4" />
+              <User className="h-3 w-3" />
               {username}
             </Badge>
 
             {/* Role Badge */}
             <Badge
-              className="hidden md:flex items-center gap-2 px-4 py-2 text-sm font-semibold shadow-lg"
+              className="hidden md:flex items-center gap-1 px-2 py-0.5 text-xs font-semibold"
               style={{
                 backgroundColor: isSuperAdmin ? "white" : "rgba(255, 255, 255, 0.2)",
                 color: isSuperAdmin ? theme.colors.primary[700] : "white",
               }}
             >
-              {isSuperAdmin && <Shield className="h-4 w-4" />}
+              {isSuperAdmin && <Shield className="h-3 w-3" />}
               {role}
             </Badge>
 
@@ -121,9 +240,9 @@ export default function ModernHeader({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="hidden md:flex h-10 w-10 rounded-full p-0 text-white hover:bg-white/20 transition-all shadow-md hover:shadow-lg"
+                  className="hidden md:flex h-8 w-8 rounded-md p-0 text-white hover:bg-white/20 transition-all"
                 >
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -145,160 +264,10 @@ export default function ModernHeader({
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden h-10 w-10 p-0 text-white hover:bg-white/20 rounded-lg transition-all"
+              className="lg:hidden h-8 w-8 p-0 text-white hover:bg-white/20 rounded-md transition-all"
               onClick={() => setMobileMenuOpen(true)}
             >
-              <Menu className="h-6 w-6" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Section - Navigation Bar */}
-      <div
-        className="border-b bg-white/95 backdrop-blur-sm shadow-md"
-        style={{ minHeight: "56px" }}
-      >
-        <div className="flex items-center justify-between px-6 py-3">
-          {/* Main Navigation Menu */}
-          <nav className="flex items-center gap-2">
-            <Link href="/">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-10 px-4 gap-2 hover:bg-accent rounded-lg transition-all"
-                style={{ color: theme.colors.primary[700] }}
-              >
-                <Home className="h-5 w-5" />
-                <span className="font-semibold text-sm hidden md:inline">Home</span>
-              </Button>
-            </Link>
-            
-            <Link href="/planboardv3">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-10 px-4 gap-2 hover:bg-accent rounded-lg transition-all"
-                style={{ color: theme.colors.primary[700] }}
-              >
-                <LayoutDashboard className="h-5 w-5" />
-                <span className="font-semibold text-sm hidden md:inline">Plan Board</span>
-              </Button>
-            </Link>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-10 px-4 gap-2 hover:bg-accent rounded-lg transition-all"
-                  style={{ color: theme.colors.primary[700] }}
-                >
-                  <Calendar className="h-5 w-5" />
-                  <span className="font-semibold text-sm hidden md:inline">Scheduling</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  View Calendar
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <ClipboardList className="mr-2 h-4 w-4" />
-                  Task Management
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Activity className="mr-2 h-4 w-4" />
-                  Staff Schedule
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-10 px-4 gap-2 hover:bg-accent rounded-lg transition-all"
-                  style={{ color: theme.colors.primary[700] }}
-                >
-                  <Users className="h-5 w-5" />
-                  <span className="font-semibold text-sm hidden md:inline">Clients</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <Users className="mr-2 h-4 w-4" />
-                  Client List
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Care Plans
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Stethoscope className="mr-2 h-4 w-4" />
-                  Medical Records
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-10 px-4 gap-2 hover:bg-accent rounded-lg transition-all"
-                  style={{ color: theme.colors.primary[700] }}
-                >
-                  <BarChart3 className="h-5 w-5" />
-                  <span className="font-semibold text-sm hidden md:inline">Reports</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  Analytics Dashboard
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Care Reports
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Activity className="mr-2 h-4 w-4" />
-                  Performance Metrics
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </nav>
-
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-10 w-10 p-0 relative rounded-lg hover:bg-accent transition-all"
-              title="Notifications"
-            >
-              <Bell className="h-5 w-5" style={{ color: theme.colors.primary[700] }} />
-              <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 bg-red-500 rounded-full animate-pulse shadow-lg"></span>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-10 w-10 p-0 rounded-lg hover:bg-accent transition-all"
-              title="Messages"
-            >
-              <MessageSquare className="h-5 w-5" style={{ color: theme.colors.primary[700] }} />
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-10 w-10 p-0 rounded-lg hover:bg-accent transition-all"
-              title="Help"
-            >
-              <HelpCircle className="h-5 w-5" style={{ color: theme.colors.primary[700] }} />
+              <Menu className="h-5 w-5" />
             </Button>
           </div>
         </div>

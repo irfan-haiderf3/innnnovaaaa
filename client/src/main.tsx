@@ -1,11 +1,9 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
-import { initializeTheme } from "./lib/theme-switcher";
-import { applyBrandTheme } from "./config/branding";
+import { applyInnovacareTheme } from "./styles/innovacare-theme";
 
-// Initialize healthcare theme on app startup
-initializeTheme();
-applyBrandTheme();
+// Initialize Innovacare theme on app startup
+applyInnovacareTheme();
 
 createRoot(document.getElementById("root")!).render(<App />);

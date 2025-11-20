@@ -208,6 +208,16 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+
+  /* Ensure all Radix Tabs Content panels start flush at the top */
+  [role="tabpanel"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  [role="tabpanel"] > :first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
 }
 
 /**
@@ -324,5 +334,40 @@
   /* Vertical text for side tabs */
   .writing-mode-vertical-rl {
     writing-mode: vertical-rl;
+  }
+
+  /* Dark visible scrollbars for better visibility */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #4a5568 #e2e8f0;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #4a5568;
+    border-radius: 4px;
+    border: 2px solid #e2e8f0;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #2d3748;
+  }
+
+  /* Force navbar menu text color to dark blue */
+  [data-nav-item] {
+    color: #2C5282 !important;
+  }
+  
+  [data-nav-item]:hover {
+    color: inherit !important;
   }
 }

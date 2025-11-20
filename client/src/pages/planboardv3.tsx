@@ -1,10 +1,9 @@
 import { useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { IHeader, IButton, IIconButton } from "@/components/innovacare";
+import InnovacareTheme from "@/styles/innovacare-theme";
 import UltraCompactFilters, { type FilterValues } from "@/components/UltraCompactFilters";
 import PlanboardTable, { type PlanboardEntry } from "@/components/PlanboardTable";
 import StatusBar, { type StatusCount } from "@/components/StatusBar";
-import { ThemeSwitcherPanel } from "@/components/ThemeSwitcherPanel";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -293,38 +292,80 @@ export default function PlanboardV3Page() {
     });
   };
 
+  const { colors, palette } = InnovacareTheme;
+
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-slate-50">
-      <Header showNavigation={true} username="System" role="Super Admin" />
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: palette.neutral[50] }}>
+      <IHeader showNavigation={true} username="System" role="Administrator" />
 
       {/* Ultra Compact Filters - No Padding */}
       <UltraCompactFilters onSearch={handleSearch} onReset={handleReset} />
 
       {/* Action Bar - Minimal Height */}
       <div className="flex items-center justify-between px-2 py-1 border-b bg-white">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-[10px] h-5 px-2">
+        <div className="flex items-center gap-2 flex-1 overflow-x-auto">
+          <Badge variant="outline" className="text-[10px] h-5 px-2 flex-shrink-0">
             <TrendingUp className="h-2.5 w-2.5 mr-1" />
             Records: <span className="font-bold ml-1">{appliedFilters ? filteredEntries.length : mockEntries.length}</span>
           </Badge>
           
           {appliedFilters && (
             <div className="flex flex-wrap gap-1">
-              {appliedFilters.status.length > 0 && (
-                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">Status: {appliedFilters.status.length}</Badge>
-              )}
+              {appliedFilters.status.length > 0 && appliedFilters.status.map((s) => (
+                <Badge key={s} variant="secondary" className="text-[9px] h-5 px-1.5">
+                  Status: {s}
+                </Badge>
+              ))}
               {appliedFilters.clientCity && (
-                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">City: {appliedFilters.clientCity}</Badge>
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  City: {appliedFilters.clientCity}
+                </Badge>
               )}
               {appliedFilters.service && (
-                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">Service</Badge>
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  Service: {appliedFilters.service}
+                </Badge>
+              )}
+              {appliedFilters.client && appliedFilters.client !== "all" && (
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  Client: {appliedFilters.client}
+                </Badge>
+              )}
+              {appliedFilters.carer && appliedFilters.carer !== "all" && (
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  Carer: {appliedFilters.carer}
+                </Badge>
+              )}
+              {appliedFilters.dateFrom && (
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  From: {appliedFilters.dateFrom}
+                </Badge>
+              )}
+              {appliedFilters.dateTo && (
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  To: {appliedFilters.dateTo}
+                </Badge>
+              )}
+              {appliedFilters.taskId && (
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  Task ID: {appliedFilters.taskId}
+                </Badge>
+              )}
+              {appliedFilters.clientCoordinator && appliedFilters.clientCoordinator !== "all" && (
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  Client Coord: {appliedFilters.clientCoordinator}
+                </Badge>
+              )}
+              {appliedFilters.carerCoordinator && appliedFilters.carerCoordinator !== "all" && (
+                <Badge variant="secondary" className="text-[9px] h-5 px-1.5">
+                  Carer Coord: {appliedFilters.carerCoordinator}
+                </Badge>
               )}
             </div>
           )}
         </div>
 
-        <div className="flex gap-1 items-center">
-          <ThemeSwitcherPanel />
+        <div className="flex gap-1 items-center flex-shrink-0">
           <Button
             variant="outline"
             size="sm"
@@ -367,7 +408,16 @@ export default function PlanboardV3Page() {
       </div>
 
       {/* Footer */}
-      <Footer />
+      <div 
+        className="py-2 px-4 text-center text-xs"
+        style={{
+          backgroundColor: colors.background,
+          borderTop: `1px solid ${palette.neutral[200]}`,
+          color: palette.neutral[500],
+        }}
+      >
+        © 2025 Innovacare Healthcare Management. All rights reserved.
+      </div>
     </div>
   );
 }

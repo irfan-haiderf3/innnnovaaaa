@@ -1,15 +1,15 @@
 import { useState } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { useToast } from "@/hooks/use-toast";
 import SearchFilters, { type FilterValues } from "@/components/SearchFilters";
 import PlanboardTable, { type PlanboardEntry } from "@/components/PlanboardTable";
 import ActionBar from "@/components/ActionBar";
 import StatusBar, { type StatusCount } from "@/components/StatusBar";
-import { ThemeSwitcherPanel } from "@/components/ThemeSwitcherPanel";
-import { useToast } from "@/hooks/use-toast";
+import { IHeader } from "@/components/innovacare";
+import InnovacareTheme from "@/styles/innovacare-theme";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronRight, Search, Table } from "lucide-react";
+import AppFooter from "@/components/Footer";
 
 export default function PlanboardPage() {
   const { toast } = useToast();
@@ -296,9 +296,11 @@ export default function PlanboardPage() {
     });
   };
 
+  const { colors, palette } = InnovacareTheme;
+
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <Header showNavigation={true} username="System" role="Super Admin" />
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: palette.neutral[50] }}>
+      <IHeader showNavigation={true} username="System" role="Administrator" />
 
       <div className="flex flex-1 overflow-hidden">
         <main className="flex-1 flex flex-col overflow-hidden">
@@ -311,11 +313,14 @@ export default function PlanboardPage() {
             >
               <div className="flex-1 flex flex-col overflow-hidden">
                 <TabsContent value="filters" className="flex-1 mt-0 flex p-2">
-                  <Card className="h-full w-full flex flex-col">
-                    <CardHeader className="pb-2 pt-2 px-3 flex-shrink-0">
+                  <Card className="h-full w-full flex flex-col" style={{ 
+                    backgroundColor: colors.background,
+                    borderColor: palette.neutral[200],
+                    boxShadow: '0 1px 3px 0 rgba(0,0,0,0.1)',
+                  }}>
+                    <CardHeader className="pb-2 pt-2 px-3 flex-shrink-0 border-b" style={{ borderColor: palette.neutral[200] }}>
                       <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm font-semibold">Search Planboard</CardTitle>
-                        <ThemeSwitcherPanel />
+                        <CardTitle className="text-sm font-semibold" style={{ color: colors.primary }}>Search Planboard</CardTitle>
                       </div>
                     </CardHeader>
                     <CardContent className="pb-2 px-3 flex-1 flex flex-col min-h-0">
@@ -331,13 +336,15 @@ export default function PlanboardPage() {
                       onYesterday={handleYesterday}
                       onCompleteAll={handleCompleteAll}
                     />
-                    <ThemeSwitcherPanel />
                   </div>
                   
                   {appliedFilters && (
-                    <Card className="flex-shrink-0">
+                    <Card className="flex-shrink-0" style={{ 
+                      backgroundColor: colors.background,
+                      borderColor: palette.neutral[200],
+                    }}>
                       <CardContent className="p-2">
-                        <div className="text-xs">
+                        <div className="text-xs" style={{ color: palette.neutral[700] }}>
                           <span className="font-semibold">Active Filters: </span>
                           {appliedFilters.status.length > 0 && (
                             <span className="mr-2">Status: {appliedFilters.status.join(", ")}</span>
@@ -370,19 +377,30 @@ export default function PlanboardPage() {
                 </TabsContent>
               </div>
 
-              <TabsList className="h-full w-auto flex-col gap-1 rounded-none border-l bg-muted/30 p-2">
+              <TabsList className="h-full w-auto flex-col gap-1 rounded-none border-l p-2" style={{
+                borderColor: palette.neutral[200],
+                backgroundColor: palette.neutral[50],
+              }}>
                 <TabsTrigger 
                   value="filters" 
-                  className="writing-mode-vertical-rl rotate-180 h-auto py-4 px-2 text-xs data-[state=active]:bg-background"
+                  className="writing-mode-vertical-rl rotate-180 h-auto py-4 px-2 text-xs"
                   data-testid="tab-filters"
+                  style={{
+                    backgroundColor: activeTab === 'filters' ? colors.primary : 'transparent',
+                    color: activeTab === 'filters' ? 'white' : palette.neutral[700],
+                  }}
                 >
                   <Search className="h-3.5 w-3.5 mb-2" />
                   Search & Filters
                 </TabsTrigger>
                 <TabsTrigger 
                   value="results" 
-                  className="writing-mode-vertical-rl rotate-180 h-auto py-4 px-2 text-xs data-[state=active]:bg-background"
+                  className="writing-mode-vertical-rl rotate-180 h-auto py-4 px-2 text-xs"
                   data-testid="tab-results"
+                  style={{
+                    backgroundColor: activeTab === 'results' ? colors.primary : 'transparent',
+                    color: activeTab === 'results' ? 'white' : palette.neutral[700],
+                  }}
                 >
                   <Table className="h-3.5 w-3.5 mb-2" />
                   Planboard Results
@@ -392,8 +410,7 @@ export default function PlanboardPage() {
           </div>
         </main>
       </div>
-
-      <Footer />
+      <AppFooter />
     </div>
   );
 }

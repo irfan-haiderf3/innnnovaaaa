@@ -9,6 +9,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { Icon } from "@/components/ui/icon";
 import { IconRegistry } from "@/lib/icon-utils";
 import healthcareImage from "@assets/generated_images/Healthcare_provider_with_elderly_patient_fcadcc1b.png";
+import icLauncherLogo from "@/components/images/ic_launcher.png";
 import { getCurrentTheme, getThemeDetails } from "@/lib/theme-switcher";
 
 export default function LoginPage() {
@@ -93,14 +94,14 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-8">
-        <div className="w-full max-w-md space-y-6">
-          {/* Header Section */}
-          <div className="flex flex-col items-center text-center space-y-3">
-            <Logo size="lg" />
+      <div className="flex-1 flex items-start justify-center p-4 md:p-6 pt-8">
+        <div className="w-full max-w-md space-y-4">
+          {/* Header Section - Compact */}
+          <div className="flex flex-col items-center text-center space-y-2">
+            <img src={icLauncherLogo} alt="HealthBridge Logo" className="h-16 w-16" />
             <div>
               <h1 
-                className="text-2xl font-bold mt-3 bg-clip-text text-transparent"
+                className="text-xl font-bold mt-2 bg-clip-text text-transparent"
                 style={{ 
                   backgroundImage: `linear-gradient(to right, ${themeColors.primary[500]}, ${themeColors.secondary[500]})`,
                   WebkitBackgroundClip: 'text',
@@ -109,7 +110,7 @@ export default function LoginPage() {
               >
                 Welcome Back
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Sign in to access your healthcare dashboard
               </p>
             </div>
@@ -123,18 +124,18 @@ export default function LoginPage() {
               borderColor: themeColors.neutral[300]
             }}
           >
-            <CardHeader className="pb-4 pt-6 px-6">
-              <CardTitle className="text-lg" style={{ color: themeColors.primary[700] }}>Sign In</CardTitle>
-              <CardDescription className="text-sm" style={{ color: themeColors.neutral[600] }}>
+            <CardHeader className="pb-3 pt-4 px-5">
+              <CardTitle className="text-base" style={{ color: themeColors.primary[700] }}>Sign In</CardTitle>
+              <CardDescription className="text-xs" style={{ color: themeColors.neutral[600] }}>
                 Enter your credentials to continue
               </CardDescription>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
+            <CardContent className="px-5 pb-5">
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <div className="space-y-1.5">
                   <Label 
                     htmlFor="username" 
-                    className="text-sm font-medium"
+                    className="text-xs font-medium"
                     style={{ color: themeColors.neutral[700] }}
                   >
                     Username
@@ -143,7 +144,7 @@ export default function LoginPage() {
                     id="username"
                     type="text"
                     placeholder=""
-                    className="h-11 text-sm"
+                    className="h-9 text-sm"
                     style={{
                       backgroundColor: themeColors.neutral[50],
                       borderColor: themeColors.neutral[400],
@@ -156,10 +157,10 @@ export default function LoginPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label 
                     htmlFor="password" 
-                    className="text-sm font-medium"
+                    className="text-xs font-medium"
                     style={{ color: themeColors.neutral[700] }}
                   >
                     Password
@@ -168,7 +169,7 @@ export default function LoginPage() {
                     id="password"
                     type="password"
                     placeholder=""
-                    className="h-11 text-sm"
+                    className="h-9 text-sm"
                     style={{
                       backgroundColor: themeColors.neutral[50],
                       borderColor: themeColors.neutral[400],
@@ -183,7 +184,7 @@ export default function LoginPage() {
 
                 <Button
                   type="submit"
-                  className="w-full h-11 mt-6 text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] hover:opacity-90"
+                  className="w-full h-9 mt-4 text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-[1.02] hover:opacity-90"
                   style={{ 
                     backgroundColor: themeColors.primary[500],
                     color: themeColors.neutral[50],

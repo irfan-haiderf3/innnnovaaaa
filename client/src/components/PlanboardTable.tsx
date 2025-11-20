@@ -13,6 +13,18 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Icon, StatusIcon } from "@/components/ui/icon";
 import { IconRegistry, StatusIconConfig } from "@/lib/icon-utils";
 import { getCurrentTheme, getThemeDetails } from "@/lib/theme-switcher";
+import RosterView from "./RosterView";
+import { 
+  Users, 
+  FileText, 
+  Calendar, 
+  Home, 
+  Truck,
+  AlertCircle,
+  Bell,
+  CheckCircle2,
+  Clock
+} from "lucide-react";
 
 export interface PlanboardEntry {
   id: string;
@@ -41,6 +53,8 @@ interface PlanboardTableProps {
 export default function PlanboardTable({ entries }: PlanboardTableProps) {
   const [sortBy, setSortBy] = useState<keyof PlanboardEntry>("taskId");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [rosterOpen, setRosterOpen] = useState(false);
+  const [selectedTaskGroup, setSelectedTaskGroup] = useState("");
   const [themeColors, setThemeColors] = useState(() => {
     const theme = getCurrentTheme();
     return getThemeDetails(theme);
@@ -76,71 +90,93 @@ export default function PlanboardTable({ entries }: PlanboardTableProps) {
     return 0;
   });
 
+  const handleOpenRoster = (taskGroup: string) => {
+    setSelectedTaskGroup(taskGroup);
+    setRosterOpen(true);
+  };
+
+  const getIconForTaskGroup = (taskGroup: string) => {
+    const group = taskGroup.toLowerCase();
+    if (group.includes("care")) return Home;
+    if (group.includes("therapy")) return FileText;
+    if (group.includes("transport")) return Truck;
+    if (group.includes("assessment")) return CheckCircle2;
+    if (group.includes("nursing")) return AlertCircle;
+    return Calendar;
+  };
+
   const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { icon: any; bgColor: string; textColor: string; animated?: boolean }> = {
-      "Completed": { 
-        icon: IconRegistry.status.success, 
-        bgColor: themeColors.success, 
-        textColor: themeColors.neutral[50],
-        animated: false 
-      },
-      "In Progress": { 
-        icon: IconRegistry.status.pending, 
-        bgColor: themeColors.accent[500], 
-        textColor: themeColors.neutral[50],
-        animated: true 
-      },
-      "Assigned": { 
-        icon: IconRegistry.status.assigned, 
-        bgColor: "#06B6D4", // Vibrant cyan for assigned tasks
-        textColor: "#ffffff",
-        animated: false 
-      },
-      "Delayed": { 
-        icon: IconRegistry.status.warning, 
-        bgColor: themeColors.warning, 
-        textColor: themeColors.neutral[900],
-        animated: true 
-      },
-      "Unassigned": { 
-        icon: IconRegistry.status.unassigned, 
-        bgColor: themeColors.secondary[400], 
-        textColor: themeColors.neutral[50],
-        animated: false 
-      },
-      "Cancelled": { 
-        icon: IconRegistry.status.cancelled, 
-        bgColor: themeColors.neutral[500], 
-        textColor: themeColors.neutral[50],
-        animated: false 
-      },
+    // Icon config stays the same, but visual style should match StatusBar legend
+    const iconMap: Record<string, { icon: any; animated?: boolean }> = {
+      "Completed": { icon: IconRegistry.status.success, animated: false },
+      "In Progress": { icon: IconRegistry.status.pending, animated: true },
+      "Assigned": { icon: IconRegistry.status.assigned, animated: false },
+      "Delayed": { icon: IconRegistry.status.warning, animated: true },
+      "Unassigned": { icon: IconRegistry.status.unassigned, animated: false },
+      "Cancelled": { icon: IconRegistry.status.cancelled, animated: false },
     };
 
-    const config = statusConfig[status] || { 
-      icon: IconRegistry.status.assigned, 
-      bgColor: themeColors.neutral[400], 
-      textColor: themeColors.neutral[50],
-      animated: false
+    // Map status to legend color key
+    const colorKey = (() => {
+      switch (status) {
+        case "Unassigned":
+          return "blue" as const;
+        case "Assigned":
+        case "Completed":
+          return "green" as const;
+        case "In Progress":
+          return "cyan" as const;
+        case "Delayed":
+          return "orange" as const;
+        case "Cancelled":
+          return "red" as const;
+        default:
+          return "gray" as const;
+      }
+    })();
+
+    // Styles aligned with StatusBar.getColorStyle
+    const styleByColor = (color: string) => {
+      switch (color) {
+        case "purple":
+          return { backgroundColor: `${themeColors.secondary[100]}`, color: themeColors.secondary[700], borderColor: themeColors.secondary[300] };
+        case "blue":
+          return { backgroundColor: `${themeColors.primary[100]}`, color: themeColors.primary[700], borderColor: themeColors.primary[300] };
+        case "green":
+          return { backgroundColor: `${themeColors.success}20`, color: themeColors.success, borderColor: `${themeColors.success}50` };
+        case "red":
+          return { backgroundColor: `${themeColors.error}20`, color: themeColors.error, borderColor: `${themeColors.error}50` };
+        case "yellow":
+          return { backgroundColor: `${themeColors.warning}20`, color: themeColors.warning, borderColor: `${themeColors.warning}50` };
+        case "orange":
+          return { backgroundColor: `${themeColors.warning}30`, color: themeColors.warning, borderColor: `${themeColors.warning}60` };
+        case "cyan":
+          return { backgroundColor: `${themeColors.accent[100]}`, color: themeColors.accent[700], borderColor: themeColors.accent[300] };
+        case "pink":
+          return { backgroundColor: `${themeColors.secondary[100]}`, color: themeColors.secondary[600], borderColor: themeColors.secondary[200] };
+        case "gray":
+        default:
+          return { backgroundColor: themeColors.neutral[200], color: themeColors.neutral[700], borderColor: themeColors.neutral[300] };
+      }
     };
-    const IconComponent = config.icon;
+
+    const IconCfg = iconMap[status] || { icon: IconRegistry.status.assigned, animated: false };
+    const IconComponent = IconCfg.icon;
+    const badgeStyle = styleByColor(colorKey);
 
     return (
-      <Badge 
-        variant="default" 
-        className="text-[10px] font-semibold px-2 py-0.5 gap-1.5 transition-all duration-200 hover:scale-105 hover:shadow-lg"
-        style={{ 
-          backgroundColor: config.bgColor, 
-          color: config.textColor,
-          borderColor: config.bgColor,
-          boxShadow: `0 2px 6px ${config.bgColor}40`
-        }}
+      <Badge
+        variant="outline"
+        className="text-[10px] font-semibold px-2 py-0.5 gap-1.5 transition-all duration-200 hover:scale-105"
+        style={badgeStyle}
       >
-        <Icon 
-          icon={IconComponent} 
-          size="xs" 
-          animated={config.animated}
+        <Icon
+          icon={IconComponent}
+          size="xs"
+          animated={IconCfg.animated}
           strokeWidth={2.5}
           className="drop-shadow-sm"
+          style={{ color: badgeStyle.color }}
         />
         {status}
       </Badge>
@@ -148,8 +184,14 @@ export default function PlanboardTable({ entries }: PlanboardTableProps) {
   };
 
   return (
-    <div className="h-full flex flex-col rounded-md border bg-card shadow-sm">
-      <ScrollArea className="flex-1">
+    <>
+      <RosterView 
+        open={rosterOpen} 
+        onClose={() => setRosterOpen(false)} 
+        taskGroup={selectedTaskGroup}
+      />
+      <div className="h-full flex flex-col rounded-md border bg-card shadow-sm">
+        <ScrollArea className="flex-1">
         <Table>
           <TableHeader 
             className="sticky top-0 z-20 border-b-2"
@@ -159,8 +201,11 @@ export default function PlanboardTable({ entries }: PlanboardTableProps) {
             }}
           >
             <TableRow className="hover:bg-transparent">
+              <TableHead className="min-w-[50px] h-9 text-xs font-bold px-2" style={{ color: themeColors.neutral[700] }}>
+                Icons
+              </TableHead>
               <TableHead 
-                className="sticky left-0 z-10 min-w-[100px] h-9 font-bold"
+                className="sticky left-[50px] z-10 min-w-[100px] h-9 font-bold"
                 style={{ 
                   background: `linear-gradient(to right, ${themeColors.neutral[100]}, ${themeColors.primary[50]}, ${themeColors.neutral[100]})`,
                   color: themeColors.neutral[700]
@@ -318,7 +363,7 @@ export default function PlanboardTable({ entries }: PlanboardTableProps) {
           <TableBody>
             {sortedEntries.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={16} className="text-center text-muted-foreground py-8 text-sm">
+                <TableCell colSpan={17} className="text-center text-muted-foreground py-8 text-sm">
                   No records found
                 </TableCell>
               </TableRow>
@@ -338,7 +383,28 @@ export default function PlanboardTable({ entries }: PlanboardTableProps) {
                     e.currentTarget.style.backgroundColor = index % 2 === 0 ? themeColors.neutral[50] : themeColors.neutral[100];
                   }}
                 >
-                  <TableCell className="sticky left-0 bg-inherit z-10 text-xs py-2 px-2 font-medium" style={{ color: themeColors.neutral[600] }}>
+                  <TableCell className="text-xs py-2 px-2">
+                    <div className="flex gap-1 items-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 hover:bg-primary/10"
+                        onClick={() => handleOpenRoster(entry.taskGroup)}
+                        title="View Roster"
+                      >
+                        <Users className="h-3.5 w-3.5" style={{ color: themeColors.primary[600] }} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 hover:bg-accent/10"
+                        title="Alerts"
+                      >
+                        <Bell className="h-3.5 w-3.5" style={{ color: themeColors.warning }} />
+                      </Button>
+                    </div>
+                  </TableCell>
+                  <TableCell className="sticky left-[50px] bg-inherit z-10 text-xs py-2 px-2 font-medium" style={{ color: themeColors.neutral[600] }}>
                     {entry.exportStatus || '-'}
                   </TableCell>
                   <TableCell className="text-xs py-2 px-2">{getStatusBadge(entry.status)}</TableCell>
@@ -376,5 +442,6 @@ export default function PlanboardTable({ entries }: PlanboardTableProps) {
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
     </div>
+    </>
   );
 }

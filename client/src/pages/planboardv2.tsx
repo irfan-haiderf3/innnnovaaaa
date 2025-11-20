@@ -1,21 +1,36 @@
 import { useState, useEffect } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { IHeader, IButton, IIconButton, IMetricCard, IMetricGrid } from "@/components/innovacare";
+import InnovacareTheme from "@/styles/innovacare-theme";
 import SearchFilters, { type FilterValues } from "@/components/SearchFilters";
 import PlanboardTable, { type PlanboardEntry } from "@/components/PlanboardTable";
 import StatusBar, { type StatusCount } from "@/components/StatusBar";
-import { ThemeSwitcherPanel } from "@/components/ThemeSwitcherPanel";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Calendar, FileCheck, Filter, Maximize2, Minimize2, GripVertical } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, FileCheck, Filter, Maximize2, Minimize2, GripVertical, PanelLeft, PanelRight, MoreVertical, X, Users, ClipboardList, AlertCircle, FileText, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+// Quick action filter definition
+interface QuickFilter {
+  id: string;
+  label: string;
+  icon: any;
+  color: 'primary' | 'accent' | 'success' | 'warning' | 'error';
+  count: number;
+}
 
 export default function PlanboardV2Page() {
   const { toast } = useToast();
@@ -27,6 +42,23 @@ export default function PlanboardV2Page() {
   const [isDragging, setIsDragging] = useState(false);
   const [filterExpanded, setFilterExpanded] = useState(false);
   const [tableExpanded, setTableExpanded] = useState(false);
+  const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
+  const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [showQuickFilters, setShowQuickFilters] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+
+  // Quick action filters
+  const quickFilters: QuickFilter[] = [
+    { id: "unassigned", label: "Unassigned", icon: AlertTriangle, color: "error", count: 14 },
+    { id: "in-progress", label: "In Progress", icon: ClipboardList, color: "accent", count: 22 },
+    { id: "delayed", label: "Delayed", icon: AlertCircle, color: "warning", count: 8 },
+    { id: "completed", label: "Completed", icon: FileCheck, color: "success", count: 45 },
+    { id: "client-review", label: "Review Due", icon: FileText, color: "primary", count: 12 },
+    { id: "urgent", label: "Urgent", icon: AlertCircle, color: "error", count: 5 },
+  ];
 
   // Check screen size for responsive behavior
   useEffect(() => {
@@ -356,19 +388,53 @@ export default function PlanboardV2Page() {
     });
   };
 
+  // Calculate paginated entries
+  const displayedEntries = appliedFilters ? filteredEntries : mockEntries;
+  const totalPages = Math.ceil(displayedEntries.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedEntries = displayedEntries.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [appliedFilters]);
+
+  const { colors, palette } = InnovacareTheme;
+
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <Header showNavigation={true} username="System" role="Super Admin" />
+    <div className="h-screen flex flex-col overflow-hidden" style={{ backgroundColor: palette.neutral[50] }}>
+      <IHeader showNavigation={true} username="System" role="Administrator" />
 
       {/* Desktop Resizable Layout */}
       {!isMobile && (
         <div id="resizable-container" className="flex flex-1 overflow-hidden relative">
+          {/* Left Collapse Tab */}
+          {leftPanelCollapsed && (
+            <div 
+              className="w-10 flex flex-col items-center justify-center border-r cursor-pointer hover:bg-primary/5 transition-colors"
+              onClick={() => setLeftPanelCollapsed(false)}
+              style={{ 
+                backgroundColor: colors.background,
+                borderColor: palette.neutral[200],
+              }}
+            >
+              <PanelLeft className="h-5 w-5 text-primary mb-2" />
+              <div className="text-xs font-semibold text-primary writing-mode-vertical" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                Filters
+              </div>
+            </div>
+          )}
+
           {/* Filter Section */}
+          {!leftPanelCollapsed && (
           <div 
-            className="overflow-hidden flex flex-col border-r bg-muted/30"
+            className="overflow-hidden flex flex-col border-r"
             style={{ 
               width: filterExpanded ? '100%' : tableExpanded ? '0%' : `${filterWidth}%`,
-              transition: filterExpanded || tableExpanded ? 'width 0.3s ease-in-out' : 'none'
+              transition: filterExpanded || tableExpanded ? 'width 0.3s ease-in-out' : 'none',
+              backgroundColor: colors.background,
+              borderColor: palette.neutral[200],
             }}
           >
             <div className="flex items-center justify-between p-3 border-b bg-background/50">
@@ -377,6 +443,15 @@ export default function PlanboardV2Page() {
                 <h2 className="text-sm font-semibold">Search Filters</h2>
               </div>
               <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => setLeftPanelCollapsed(true)}
+                  title="Collapse filter panel"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -399,9 +474,10 @@ export default function PlanboardV2Page() {
               <SearchFilters onSearch={handleSearch} onReset={handleReset} />
             </div>
           </div>
+          )}
 
           {/* Draggable Divider */}
-          {!filterExpanded && !tableExpanded && (
+          {!filterExpanded && !tableExpanded && !leftPanelCollapsed && (
             <div
               className="w-1 bg-border hover:bg-primary/50 cursor-col-resize flex items-center justify-center relative group transition-colors"
               onMouseDown={() => setIsDragging(true)}
@@ -414,17 +490,18 @@ export default function PlanboardV2Page() {
 
           {/* Results Section */}
           <div 
-            className="overflow-hidden flex flex-col bg-background"
+            className="overflow-hidden flex flex-col"
             style={{ 
               width: tableExpanded ? '100%' : filterExpanded ? '0%' : `${100 - filterWidth}%`,
-              transition: filterExpanded || tableExpanded ? 'width 0.3s ease-in-out' : 'none'
+              transition: filterExpanded || tableExpanded ? 'width 0.3s ease-in-out' : 'none',
+              backgroundColor: colors.background,
             }}
           >
             <div className="flex items-center justify-between p-3 border-b bg-background/50">
               <div className="flex items-center gap-2">
                 <h2 className="text-sm font-semibold">Results</h2>
                 <Badge variant="outline" className="text-xs">
-                  Total: <span className="font-semibold ml-1">{appliedFilters ? filteredEntries.length : mockEntries.length}</span>
+                  Showing: <span className="font-semibold ml-1">{startIndex + 1}-{Math.min(endIndex, displayedEntries.length)}</span> of <span className="font-semibold">{displayedEntries.length}</span>
                 </Badge>
               </div>
               <div className="flex gap-1">
@@ -443,6 +520,15 @@ export default function PlanboardV2Page() {
                   title={tableExpanded ? "Restore" : "Expand to full screen"}
                 >
                   {tableExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => setRightPanelCollapsed(true)}
+                  title="Collapse status panel"
+                >
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -487,37 +573,91 @@ export default function PlanboardV2Page() {
             {/* Results Table */}
             <div className="flex-1 overflow-auto p-2">
               <Card className="h-full">
-                <PlanboardTable entries={appliedFilters ? filteredEntries : mockEntries} />
+                <PlanboardTable entries={paginatedEntries} />
               </Card>
             </div>
 
-            {/* Action Buttons */}
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-4 py-2 border-t bg-background">
+                <div className="text-xs text-muted-foreground">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="h-8 text-xs"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5 mr-1" />
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="h-8 text-xs"
+                  >
+                    Next
+                    <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons Dropdown */}
             <div className="flex gap-2 p-2 border-t bg-background">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleYesterday}
-                className="h-8 text-xs flex-1"
-              >
-                <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                Yesterday
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleCompleteAll}
-                className="h-8 text-xs flex-1"
-              >
-                <FileCheck className="h-3.5 w-3.5 mr-1.5" />
-                Complete All
-              </Button>
-              <ThemeSwitcherPanel />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs flex-1"
+                  >
+                    <MoreVertical className="h-3.5 w-3.5 mr-1.5" />
+                    Quick Actions
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onClick={handleYesterday}>
+                    <Calendar className="h-3.5 w-3.5 mr-2" />
+                    Yesterday
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleCompleteAll}>
+                    <FileCheck className="h-3.5 w-3.5 mr-2" />
+                    Complete All
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Status Bar */}
-            <div className="p-2 border-t bg-background">
-              <StatusBar statuses={statusCounts} />
-            </div>
+            {!rightPanelCollapsed && (
+              <div className="p-2 border-t bg-background">
+                <StatusBar statuses={statusCounts} />
+              </div>
+            )}
           </div>
+
+          {/* Right Collapse Tab */}
+          {rightPanelCollapsed && (
+            <div 
+              className="w-10 flex flex-col items-center justify-center border-l cursor-pointer hover:bg-primary/5 transition-colors"
+              onClick={() => setRightPanelCollapsed(false)}
+              style={{ 
+                backgroundColor: colors.background,
+                borderColor: palette.neutral[200],
+              }}
+            >
+              <PanelRight className="h-5 w-5 text-primary mb-2" />
+              <div className="text-xs font-semibold text-primary writing-mode-vertical" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>
+                Status
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -566,6 +706,27 @@ export default function PlanboardV2Page() {
               </div>
 
               <div className="flex gap-2 w-full sm:w-auto sm:ml-auto">
+                <div className="relative">
+                  <IButton 
+                    icon={Filter} 
+                    size="sm" 
+                    variant={showQuickFilters ? "primary" : "outline"}
+                    onClick={() => setShowQuickFilters(!showQuickFilters)}
+                  >
+                    {showQuickFilters ? 'Hide Filters' : 'Show Filters'}
+                  </IButton>
+                  {selectedFilters.length > 0 && (
+                    <span 
+                      className="absolute -top-1 -right-1 rounded-full text-[10px] font-bold px-1.5 py-0.5 min-w-[18px] text-center"
+                      style={{
+                        backgroundColor: InnovacareTheme.colors.primary,
+                        color: 'white',
+                      }}
+                    >
+                      {selectedFilters.length}
+                    </span>
+                  )}
+                </div>
                 <Button
                   variant="outline"
                   size="sm"
@@ -585,6 +746,106 @@ export default function PlanboardV2Page() {
                 </Button>
               </div>
             </div>
+
+            {/* Quick Actions Section */}
+            {showQuickFilters && selectedFilters.length > 0 && (
+              <div style={{ borderBottom: `1px solid ${InnovacareTheme.palette.neutral[200]}` }}>
+                <IMetricGrid>
+                  {quickFilters
+                    .filter(f => selectedFilters.includes(f.id))
+                    .map((filter) => (
+                      <div key={filter.id} className="relative">
+                        <IMetricCard
+                          title={filter.label}
+                          value={filter.count}
+                          icon={filter.icon}
+                          color={filter.color}
+                          active={activeFilter === filter.id}
+                          onClick={() => setActiveFilter(activeFilter === filter.id ? null : filter.id)}
+                        />
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedFilters(selectedFilters.filter(id => id !== filter.id));
+                            if (activeFilter === filter.id) setActiveFilter(null);
+                          }}
+                          className="absolute -top-1 -right-1 rounded-full p-0.5 shadow-md hover:scale-110 transition-transform"
+                          style={{
+                            backgroundColor: InnovacareTheme.palette.error,
+                            color: 'white',
+                          }}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                </IMetricGrid>
+              </div>
+            )}
+
+            {/* Empty State for Quick Filters */}
+            {showQuickFilters && selectedFilters.length === 0 && (
+              <div 
+                className="px-4 py-3 text-center"
+                style={{
+                  backgroundColor: InnovacareTheme.palette.neutral[50],
+                  borderBottom: `1px solid ${InnovacareTheme.palette.neutral[200]}`,
+                }}
+              >
+                <p className="text-xs" style={{ color: InnovacareTheme.palette.neutral[500] }}>
+                  No quick filters selected. Use the dropdown below to add filter cards.
+                </p>
+              </div>
+            )}
+
+            {/* Add Quick Filter Dropdown */}
+            {showQuickFilters && (
+              <div 
+                className="px-2 py-2 flex items-center gap-2"
+                style={{
+                  backgroundColor: InnovacareTheme.colors.background,
+                  borderBottom: `1px solid ${InnovacareTheme.palette.neutral[200]}`,
+                }}
+              >
+                <Select 
+                  value="" 
+                  onValueChange={(value) => {
+                    if (!selectedFilters.includes(value)) {
+                      setSelectedFilters([...selectedFilters, value]);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="h-8 w-52 text-xs">
+                    <SelectValue placeholder="+ Add quick filter..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {quickFilters
+                      .filter(f => !selectedFilters.includes(f.id))
+                      .map(filter => (
+                        <SelectItem key={filter.id} value={filter.id}>
+                          {filter.label} ({filter.count})
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                
+                {selectedFilters.length > 0 && (
+                  <div style={{ color: InnovacareTheme.palette.error }}>
+                    <IButton
+                      icon={X}
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        setSelectedFilters([]);
+                        setActiveFilter(null);
+                      }}
+                    >
+                      Clear All
+                    </IButton>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Active Filters Display */}
             {appliedFilters && (
@@ -638,7 +899,16 @@ export default function PlanboardV2Page() {
         </>
       )}
 
-      <Footer />
+      <div 
+        className="py-2 px-4 text-center text-xs"
+        style={{
+          backgroundColor: colors.background,
+          borderTop: `1px solid ${palette.neutral[200]}`,
+          color: palette.neutral[500],
+        }}
+      >
+        © 2025 Innovacare Healthcare Management. All rights reserved.
+      </div>
     </div>
   );
 }

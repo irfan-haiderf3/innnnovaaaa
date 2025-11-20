@@ -12,7 +12,11 @@ import {
   Wrench,
   BarChart3,
   SettingsIcon,
+  Activity,
+  Users,
+  Mail,
 } from "@/lib/icon-utils";
+import { MoreHorizontal, Smartphone, MapPin } from "lucide-react";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -56,23 +60,24 @@ export default function Header({ showNavigation = true, username = "System", rol
     return () => clearInterval(interval);
   }, [themeColors]);
 
-  // Organize nav items into groups for Super Admin
-  const coreNavItems = [
+  // Main menu items to show inline - expanded list
+  const mainNavItems = [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { path: "/planboard", label: "Plan Board", icon: Calendar },
-    { path: "/planboardv2", label: "Plan Board V2", icon: Calendar },
-    { path: "/jobs", label: "Jobs", icon: Briefcase },
+    { path: "/monitoring", label: "Monitoring", icon: Activity },
+    { path: "/crm", label: "CRM", icon: Users },
     { path: "/scheduling", label: "Scheduling", icon: Calendar },
-  ];
-
-  const financialNavItems = [
     { path: "/billing", label: "Billing", icon: DollarSign },
+    { path: "/wage", label: "Wage", icon: DollarSign },
+    { path: "/smart-app", label: "Smart App", icon: Smartphone },
+    { path: "/mail-merge", label: "Mail Merge", icon: Mail },
     { path: "/documents", label: "Documents", icon: FileText },
+    { path: "/map", label: "Map", icon: MapPin },
   ];
 
-  const adminNavItems = [
-    { path: "/bi", label: "Business Intelligence", icon: BarChart3 },
+  // Additional items for "More" dropdown
+  const moreNavItems = [
     { path: "/maintenance", label: "Maintenance", icon: Wrench },
+    { path: "/bi", label: "Business Intelligence", icon: BarChart3 },
     { path: "/setup", label: "Setup", icon: SettingsIcon },
     { path: "/help", label: "Help", icon: HelpCircle },
   ];
@@ -80,14 +85,15 @@ export default function Header({ showNavigation = true, username = "System", rol
   // For non-admin users, show limited menu
   const regularNavItems = [
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { path: "/planboard", label: "Plan Board", icon: Calendar },
+    { path: "/planboardv2", label: "Plan Board", icon: Calendar },
+    { path: "/client-profile", label: "Clients", icon: IconRegistry.user.users },
     { path: "/jobs", label: "Jobs", icon: Briefcase },
     { path: "/scheduling", label: "Scheduling", icon: Calendar },
     { path: "/help", label: "Help", icon: HelpCircle },
   ];
 
   const navItems = isSuperAdmin 
-    ? [...coreNavItems, ...financialNavItems, ...adminNavItems]
+    ? [...mainNavItems, ...moreNavItems]
     : regularNavItems;
 
   const isActive = (path: string) => location === path;
@@ -226,21 +232,22 @@ export default function Header({ showNavigation = true, username = "System", rol
         >
           <nav className="flex items-center gap-1 px-6 py-2">
             {isSuperAdmin ? (
-              // Super Admin - Organized menu with separators
+              // Super Admin - Show main menu items inline with More dropdown
               <>
-                {coreNavItems.map((item) => {
+                {mainNavItems.map((item) => {
                   const IconComponent = item.icon;
                   return (
                     <Link key={item.path} href={item.path}>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-9 text-sm gap-2 px-4 transition-all duration-200 hover:shadow-md rounded-lg"
+                        className="h-9 text-xs gap-1.5 px-3 transition-all duration-200 hover:shadow-md rounded-lg whitespace-nowrap"
+                        data-nav-item
                         style={{
                           background: isActive(item.path) 
                             ? `linear-gradient(135deg, ${themeColors.primary[500]}, ${themeColors.primary[600]})` 
                             : 'transparent',
-                          color: isActive(item.path) ? 'white' : themeColors.neutral[700],
+                          color: isActive(item.path) ? 'white' : '#2C5282',
                           fontWeight: isActive(item.path) ? 600 : 500,
                           boxShadow: isActive(item.path) ? `0 4px 12px ${themeColors.primary[300]}` : 'none'
                         }}
@@ -253,7 +260,7 @@ export default function Header({ showNavigation = true, username = "System", rol
                         onMouseLeave={(e) => {
                           if (!isActive(item.path)) {
                             e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = themeColors.neutral[700];
+                            e.currentTarget.style.color = '#2C5282';
                           }
                         }}
                         data-testid={`link-nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
@@ -265,97 +272,43 @@ export default function Header({ showNavigation = true, username = "System", rol
                           strokeWidth={isActive(item.path) ? 2.5 : 2}
                           style={{ color: isActive(item.path) ? 'white' : themeColors.primary[500] }}
                         />
-                        {item.label}
+                        <span>{item.label}</span>
                       </Button>
                     </Link>
                   );
                 })}
-                <Separator orientation="vertical" className="h-6 mx-2" />
-                {financialNavItems.map((item) => {
-                  const IconComponent = item.icon;
-                  return (
-                    <Link key={item.path} href={item.path}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-9 text-sm gap-2 px-4 transition-all duration-200 hover:shadow-md rounded-lg"
-                        style={{
-                          background: isActive(item.path) 
-                            ? `linear-gradient(135deg, ${themeColors.primary[500]}, ${themeColors.primary[600]})` 
-                            : 'transparent',
-                          color: isActive(item.path) ? 'white' : themeColors.neutral[700],
-                          fontWeight: isActive(item.path) ? 600 : 500,
-                          boxShadow: isActive(item.path) ? `0 4px 12px ${themeColors.primary[300]}` : 'none'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!isActive(item.path)) {
-                            e.currentTarget.style.backgroundColor = themeColors.primary[50];
-                            e.currentTarget.style.color = themeColors.primary[700];
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!isActive(item.path)) {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = themeColors.neutral[700];
-                          }
-                        }}
-                        data-testid={`link-nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Icon 
-                          icon={IconComponent} 
-                          size="sm" 
-                          animated={isActive(item.path)} 
-                          strokeWidth={isActive(item.path) ? 2.5 : 2}
-                          style={{ color: isActive(item.path) ? 'white' : themeColors.primary[500] }}
-                        />
-                        {item.label}
-                      </Button>
-                    </Link>
-                  );
-                })}
-                <Separator orientation="vertical" className="h-6 mx-2" />
-                {adminNavItems.map((item) => {
-                  const IconComponent = item.icon;
-                  return (
-                    <Link key={item.path} href={item.path}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-9 text-sm gap-2 px-4 transition-all duration-200 hover:shadow-md rounded-lg"
-                        style={{
-                          background: isActive(item.path) 
-                            ? `linear-gradient(135deg, ${themeColors.primary[500]}, ${themeColors.primary[600]})` 
-                            : 'transparent',
-                          color: isActive(item.path) ? 'white' : themeColors.neutral[700],
-                          fontWeight: isActive(item.path) ? 600 : 500,
-                          boxShadow: isActive(item.path) ? `0 4px 12px ${themeColors.primary[300]}` : 'none'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!isActive(item.path)) {
-                            e.currentTarget.style.backgroundColor = themeColors.primary[50];
-                            e.currentTarget.style.color = themeColors.primary[700];
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!isActive(item.path)) {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = themeColors.neutral[700];
-                          }
-                        }}
-                        data-testid={`link-nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                      >
-                        <Icon 
-                          icon={IconComponent} 
-                          size="sm" 
-                          animated={isActive(item.path)} 
-                          strokeWidth={isActive(item.path) ? 2.5 : 2}
-                          style={{ color: isActive(item.path) ? 'white' : themeColors.primary[500] }}
-                        />
-                        {item.label}
-                      </Button>
-                    </Link>
-                  );
-                })}
+                
+                {/* More Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-9 text-xs gap-1.5 px-3 transition-all duration-200 hover:shadow-md rounded-lg"
+                      data-nav-item
+                      style={{
+                        color: '#2C5282',
+                        fontWeight: 500,
+                      }}
+                    >
+                      <MoreHorizontal className="h-4 w-4" style={{ color: themeColors.primary[500] }} />
+                      <span>More</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    {moreNavItems.map((item) => {
+                      const IconComponent = item.icon;
+                      return (
+                        <Link key={item.path} href={item.path}>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <Icon icon={IconComponent} size="sm" className="mr-2" />
+                            {item.label}
+                          </DropdownMenuItem>
+                        </Link>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               // Regular users - Simple menu
@@ -383,12 +336,12 @@ export default function Header({ showNavigation = true, username = "System", rol
       {showNavigation && mobileMenuOpen && (
         <nav className="lg:hidden border-t px-2 py-2 space-y-0.5 max-h-[calc(100vh-2.75rem)] overflow-y-auto">
           {isSuperAdmin ? (
-            // Super Admin - Organized mobile menu with labels
+            // Super Admin - Mobile menu with all items
             <>
               <div className="text-[10px] font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider">
-                Core Operations
+                Main Menu
               </div>
-              {coreNavItems.map((item) => {
+              {mainNavItems.map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <Link key={item.path} href={item.path}>
@@ -406,29 +359,9 @@ export default function Header({ showNavigation = true, username = "System", rol
               })}
               <Separator className="my-2" />
               <div className="text-[10px] font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider">
-                Financial
+                More Options
               </div>
-              {financialNavItems.map((item) => {
-                const IconComponent = item.icon;
-                return (
-                  <Link key={item.path} href={item.path}>
-                    <Button
-                      variant={isActive(item.path) ? "secondary" : "ghost"}
-                      className="w-full justify-start h-7 text-xs gap-1.5 transition-all duration-200 hover:translate-x-1"
-                      onClick={() => setMobileMenuOpen(false)}
-                      data-testid={`link-mobile-nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
-                    >
-                      <Icon icon={IconComponent} size="sm" animated={isActive(item.path)} />
-                      {item.label}
-                    </Button>
-                  </Link>
-                );
-              })}
-              <Separator className="my-2" />
-              <div className="text-[10px] font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider">
-                Administration
-              </div>
-              {adminNavItems.map((item) => {
+              {moreNavItems.map((item) => {
                 const IconComponent = item.icon;
                 return (
                   <Link key={item.path} href={item.path}>
